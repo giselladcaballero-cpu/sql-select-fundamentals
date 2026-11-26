@@ -10,6 +10,39 @@ Consultas básicas SELECT y alias sobre la tabla `sales` de TechStore, resueltas
 2. **Selección específica** — solo `customer_id`, `product_id` y `total_amount`, que es lo que finanzas necesita.
 3. **Alias en español** — `order_date`, `product_name` y `quantity` renombradas como `fecha_pedido`, `nombre_producto` y `cantidad_unidades` con `AS`.
 
+## Resultado esperado
+
+Resultado de cada consulta sobre los 10 registros de `sales` del enunciado (se muestran las primeras 3 filas de cada una a modo de ejemplo):
+
+**Consulta 1 — `SELECT *`**
+
+| order_id | order_date | customer_id | product_id | product_name | category | quantity | unit_price | total_amount |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1001 | 2024-01-05 | 201 | 301 | Laptop Pro 15 | Computación | 2 | 1200.00 | 2400.00 |
+| 1002 | 2024-01-08 | 202 | 302 | Mouse Inalámbrico | Accesorios | 5 | 28.00 | 140.00 |
+| 1003 | 2024-01-12 | 203 | 303 | Monitor 4K 27" | Computación | 1 | 450.00 | 450.00 |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... |
+
+**Consulta 2 — columnas para finanzas**
+
+| customer_id | product_id | total_amount |
+| --- | --- | --- |
+| 201 | 301 | 2400.00 |
+| 202 | 302 | 140.00 |
+| 203 | 303 | 450.00 |
+| ... | ... | ... |
+
+**Consulta 3 — con alias en español**
+
+| fecha_pedido | nombre_producto | cantidad_unidades |
+| --- | --- | --- |
+| 2024-01-05 | Laptop Pro 15 | 2 |
+| 2024-01-08 | Mouse Inalámbrico | 5 |
+| 2024-01-12 | Monitor 4K 27" | 1 |
+| ... | ... | ... |
+
+Así se ve de inmediato por qué la Consulta 3 es la que finanzas realmente puede leer: ya no hace falta saber qué es `order_date` o `product_name`, los nombres de columna ya están en su propio idioma.
+
 ## ¿Por qué es mala práctica usar `SELECT *` en producción?
 
 1. **Rendimiento.** `SELECT *` trae todas las columnas, incluso las que la consulta no necesita. En una tabla con columnas pesadas (texto largo, JSON, campos calculados) eso significa más datos viajando por la red y más memoria usada del lado del cliente, aunque solo se vaya a usar un tercio de las columnas. En `sales`, si un reporte de finanzas solo necesita `customer_id`, `product_id` y `total_amount`, traer también `product_name`, `category` y el resto es trabajo de más para el motor y para la red, sin ningún beneficio.
